@@ -1,0 +1,35 @@
+{
+    "name": "jatdung/media-manager",
+    "alias": "",
+    "description": "Dcat Media Manager",
+    "type": "library",
+    "keywords": [
+        "dcat-admin",
+        "extension"
+    ],
+    "homepage": "https://github.com/jatdung/media-manager",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "jatdung",
+            "email": "550398445@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "dcat/laravel-admin": "~2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jatdung\\MediaManager\\": "src/"
+        }
+    },
+    "extra": {
+        "dcat-admin": "Jatdung\\MediaManager\\MediaManagerServiceProvider",
+        "laravel": {
+            "providers": [
+                "Jatdung\\MediaManager\\MediaManagerServiceProvider"
+            ]
+        }
+    }
+}
