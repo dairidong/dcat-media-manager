@@ -72,9 +72,6 @@ class MediaManager
     {
         if (!$this->exists()) {
             throw new \Exception("File or directory [$this->path] not exists");
-            // Handler::error('Error', "File or directory [$this->path] not exists");
-
-            // return [];
         }
 
         $files = $this->storage->files($this->path);
