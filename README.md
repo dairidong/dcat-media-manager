@@ -1,6 +1,10 @@
 # Dcat Admin 文件管理扩展
+###
+![uTools_1650016395341](https://user-images.githubusercontent.com/48778797/163557077-aeadab3f-ffff-4e45-bcef-2303dd0b5df4.png)
+
+
 ### 安装
-1. 下载`zip`压缩包，打开扩展管理页面，点击`本地安装`按钮选择提交，然后找到` jatdung.media-manager`行点击`启用`按钮。
+1. 下载`zip`压缩包，打开扩展管理页面，点击`本地安装`按钮选择提交，然后找到 `jatdung.media-manager` 行点击 `启用` 按钮。
 2. 打开 `config/admin.php`，找到 `extension` ，添加配置：
     ```php
     'extension'                 => [
