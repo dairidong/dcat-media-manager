@@ -27,7 +27,6 @@ class MediaManagerController extends Controller
             ->body(Admin::view("jatdung.media-manager::index", [
                 'list' => $manager->ls(),
                 'nav'  => $manager->navigation($view),
-                'url'  => $manager->urls(),
                 'view' => $view,
                 'path' => $path
             ]));

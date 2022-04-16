@@ -42,6 +42,11 @@ class MediaManager
     ];
 
     /**
+     * @var string[]
+     */
+    protected $fileUnits = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
+    /**
      * MediaManager constructor.
      *
      * @param string $path
@@ -97,7 +102,7 @@ class MediaManager
      */
     protected function getFullPath($path)
     {
-        $fullPath = $this->storage->getDriver()->getAdapter()->applyPathPrefix($path);
+        $fullPath = $this->storage->path($path);
         if (str_contains($fullPath, '..')) {
             throw new \Exception('Incorrect path');
         }
@@ -108,6 +113,7 @@ class MediaManager
     public function download()
     {
         $fullPath = $this->getFullPath($this->path);
+
 
         if (File::isFile($fullPath)) {
             return response()->download($fullPath);
@@ -123,7 +129,7 @@ class MediaManager
         foreach ($paths as $path) {
             $fullPath = $this->getFullPath($path);
 
-            if (is_file($fullPath)) {
+            if (File::isFile($fullPath)) {
                 $this->storage->delete($path);
             } else {
                 $this->storage->deleteDirectory($path);
@@ -171,24 +177,10 @@ class MediaManager
 
     public function exists()
     {
-        $path = $this->getFullPath($this->path);
-
-        return file_exists($path);
-    }
-
-    /**
-     * @return array
-     */
-    public function urls()
-    {
-        return [
-            'path'       => $this->path,
-            'index'      => admin_route('media-index'),
-            'move'       => admin_route('media-move'),
-            'delete'     => admin_route('media-delete'),
-            'upload'     => admin_route('media-upload'),
-            'new-folder' => admin_route('media-new-folder'),
-        ];
+        if ($this->path === '/') {
+            return true;
+        }
+        return $this->storage->exists($this->path);
     }
 
     public function formatFiles($files = [])
@@ -318,22 +310,18 @@ class MediaManager
 
     public function getFilesize($file)
     {
-        $bytes = filesize($this->getFullPath($file));
-
-        $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        $bytes = $this->storage->getSize($file);
 
         for ($i = 0; $bytes > 1024; $i++) {
             $bytes /= 1024;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($bytes, 2) . ' ' . $this->fileUnits[$i];
     }
 
     public function getFileChangeTime($file)
     {
-        $time = filectime($this->getFullPath($file));
-
-        return date('Y-m-d H:i:s', $time);
+        return date('Y-m-d H:i:s', $this->storage->lastModified($file));
     }
 }
 
