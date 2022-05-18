@@ -15,6 +15,11 @@ class MediaManager
     protected $path = '/';
 
     /**
+     * @var string
+     */
+    protected $disk = '';
+
+    /**
      * @var \Illuminate\Filesystem\FilesystemAdapter
      */
     protected $storage;
@@ -25,6 +30,13 @@ class MediaManager
      * @var string
      */
     protected $allowed = [];
+
+    /**
+     * List of allowed allDisks
+     *
+     * @var array
+     */
+    protected $allDisks = [];
 
     /**
      * @var array
@@ -50,8 +62,9 @@ class MediaManager
      * MediaManager constructor.
      *
      * @param string $path
+     * @param string $disk
      */
-    public function __construct($path = '/')
+    public function __construct(string $path = '/', string $disk = '')
     {
         $this->path = $path;
 
@@ -59,18 +72,34 @@ class MediaManager
             $this->allowed = explode(',', config('admin.extensions.media-manager.allowed_ext'));
         }
 
+        $this->initDisk($disk);
         $this->initStorage();
     }
 
     private function initStorage()
     {
-        $disk = config('admin.extension.media-manager.disk');
-
-        $this->storage = Storage::disk($disk);
+        $this->storage = Storage::disk($this->disk);
 
         if (!$this->storage->getDriver()->getAdapter() instanceof Local) {
             throw new \Exception('[jatdung/media-manager] only works for local storage.');
         }
+    }
+
+    protected function initDisk(string $disk = '')
+    {
+        $diskConfig = $this->getAllDisks();
+
+        if (empty($disk)) {
+            $this->disk = $diskConfig[0];
+            return $diskConfig[0];
+        }
+
+        if (!in_array($disk, $diskConfig)) {
+            throw new \Exception(sprintf('[jatdung/media-manager] disk [%s] is not in config [admin.extension.disk].', $disk));
+        }
+
+        $this->disk = $disk;
+        return $disk;
     }
 
     public function ls()
@@ -113,7 +142,6 @@ class MediaManager
     public function download()
     {
         $fullPath = $this->getFullPath($this->path);
-
 
         if (File::isFile($fullPath)) {
             return response()->download($fullPath);
@@ -193,7 +221,7 @@ class MediaManager
                 'preview'  => $this->getFilePreview($file),
                 'isDir'    => false,
                 'size'     => $this->getFilesize($file),
-                'link'     => admin_route('media-download', compact('file')),
+                'link'     => admin_route('media-download', ['file' => $file, 'disk' => $this->disk]),
                 'url'      => $this->storage->url($file),
                 'time'     => $this->getFileChangeTime($file),
             ];
@@ -216,7 +244,7 @@ class MediaManager
                 'preview'  => str_replace('__path__', $dir, $preview),
                 'isDir'    => true,
                 'size'     => '',
-                'link'     => admin_route('media-index', ['path' => '/' . trim($dir, '/'), 'view' => request('view')]),
+                'link'     => admin_route('media-index', ['path' => '/' . trim($dir, '/'), 'view' => request('view'), 'disk' => $this->disk]),
                 'url'      => $this->storage->url($dir),
                 'time'     => $this->getFileChangeTime($dir),
             ];
@@ -322,6 +350,19 @@ class MediaManager
     public function getFileChangeTime($file)
     {
         return date('Y-m-d H:i:s', $this->storage->lastModified($file));
+    }
+
+    public function getAllDisks()
+    {
+        if ($this->allDisks === []) {
+            $diskConfig = config('admin.extension.media-manager.disk');
+            if (empty($diskConfig)) {
+                throw new \Exception('[jatdung/media-manager] config [admin.extension.disk] is empty.');
+            }
+            $this->allDisks = (array)$diskConfig;
+        }
+
+        return $this->allDisks;
     }
 }
 

@@ -16,27 +16,31 @@ class MediaManagerController extends Controller
     {
         Admin::requireAssets('@jatdung.media-manager');
 
-        $path = $request->get('path', '/');
-        $view = $request->get('view', 'table');
+        $path = $request->get('path') ?: '/';
+        $disk = $request->get('disk') ?: '';
+        $view = $request->get('view') ?: 'table';
 
-        $manager = new MediaManager($path);
+        $manager = new MediaManager($path, $disk);
 
         return $content
             ->title(MediaManagerServiceProvider::trans('media.title'))
             ->description(MediaManagerServiceProvider::trans('media.description'))
             ->body(Admin::view("jatdung.media-manager::index", [
-                'list' => $manager->ls(),
-                'nav'  => $manager->navigation($view),
-                'view' => $view,
-                'path' => $path
+                'list'        => $manager->ls(),
+                'nav'         => $manager->navigation($view),
+                'view'        => $view,
+                'path'        => $path,
+                'disks'       => $manager->getAllDisks(),
+                'currentDisk' => $disk,
             ]));
     }
 
     public function download(Request $request)
     {
         $file = $request->get('file');
+        $disk = $request->get('disk', '');
 
-        $manager = new MediaManager($file);
+        $manager = new MediaManager($file, $disk);
 
         try {
             return $manager->download();
@@ -51,9 +55,10 @@ class MediaManagerController extends Controller
     public function upload(Request $request)
     {
         $files = $request->file('files');
-        $dir = $request->get('dir', '/');
+        $dir = $request->get('dir') ?: '/';
+        $disk = $request->get('disk') ?: '';
 
-        $manager = new MediaManager($dir);
+        $manager = new MediaManager($dir, $disk);
 
         try {
             $manager->upload($files);
@@ -74,8 +79,9 @@ class MediaManagerController extends Controller
     public function delete(Request $request)
     {
         $files = $request->get('files');
+        $disk = $request->get('disk') ?: '';
 
-        $manager = new MediaManager();
+        $manager = new MediaManager('/', $disk);
 
         try {
             $manager->delete($files);
@@ -96,8 +102,9 @@ class MediaManagerController extends Controller
     {
         $path = $request->get('path');
         $new = $request->get('new');
+        $disk = $request->get('disk') ?: '';
 
-        $manager = new MediaManager($path);
+        $manager = new MediaManager($path, $disk);
 
         try {
             $manager->move($new);
@@ -119,8 +126,9 @@ class MediaManagerController extends Controller
     {
         $dir = $request->get('dir');
         $name = $request->get('name');
+        $disk = $request->get('disk') ?: '';
 
-        $manager = new MediaManager($dir);
+        $manager = new MediaManager($dir, $disk);
 
         try {
             if (!$manager->newFolder($name)) {

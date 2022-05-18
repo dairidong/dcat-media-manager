@@ -16,7 +16,6 @@
                 var path = $(this).data('path')
                 var confirm = $form.data('confirm-message') ? $form.data('confirm-message') : '确认删除？'
 
-
                 input.val(path)
 
                 Dcat.Form({
@@ -29,7 +28,7 @@
             });
 
             // 文件移动
-            $('#file-move').on('submit', function (event) {
+            $('#file-move').on('subm it', function (event) {
                 event.preventDefault();
 
                 var $form = $(this);
@@ -121,6 +120,7 @@
                 Dcat.reload(url.href)
             });
 
+            // 多文件删除
             $('.file-delete-multiple').click(function () {
                 var files = $(".file-select input:checked").map(function () {
                     return $(this).val();
@@ -133,6 +133,7 @@
 
                 var confirm = $(this).data('confirm-message')
                 var url = $(this).data('url')
+                var disk = $(this).data('disk')
 
                 Dcat.confirm(
                     confirm ? confirm : "确认删除?",
@@ -143,7 +144,8 @@
                             url: url,
                             data: {
                                 'files[]': files,
-                                _token: Dcat.token
+                                _token: Dcat.token,
+                                disk: disk,
                             },
                             success: requestSuccess,
                             error: function () {
@@ -155,6 +157,14 @@
                     {showLoaderOnConfirm: true}
                 );
             });
+
+            // 切换 disk
+            $('.disk-select').on('change', function () {
+                var url = new URL(window.location.href)
+                url.search = ''
+                url.searchParams.set('disk', encodeURI($(this).val()))
+                Dcat.reload(url.href)
+            })
 
             function requestSuccess(response) {
                 Dcat.reload()

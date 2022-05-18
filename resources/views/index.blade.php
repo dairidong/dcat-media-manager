@@ -14,11 +14,12 @@
                             <button class="btn btn-default file-delete-multiple"
                                     title="Delete"
                                     data-confirm-message="{{ trans('admin.delete_confirm') }}"
-                                    data-url="{{ admin_route('media-delete') }}">
+                                    data-url="{{ admin_route('media-delete') }}"
+                                    data-disk="{{ $currentDisk }}">
                                 <i class="fa fa-trash-o"></i>
                             </button>
                         </div>
-                        <!-- /.btn-group -->
+                        <!-- .btn-group -->
                         <label class="btn btn-default btn">
                             <i class="fa fa-upload"></i>&nbsp;&nbsp;{{ trans('admin.upload') }}
                             <form action="{{ admin_route('media-upload') }}"
@@ -27,6 +28,7 @@
                                   enctype="multipart/form-data">
                                 <input type="file" name="files[]" class="hidden file-upload" multiple>
                                 <input type="hidden" name="dir" value="{{ $path }}"></input>
+                                <input type="hidden" name="disk" value="{{ $currentDisk }}"></input>
                                 {{ csrf_field() }}
                             </form>
                         </label>
@@ -37,11 +39,21 @@
                         </a>
 
                         <div class="btn-group">
-                            <a href="{{ route('dcat.admin.media-index', ['path' => $path, 'view' => 'table']) }}"
+                            <a href="{{ route('dcat.admin.media-index', ['path' => $path, 'view' => 'table', 'disk' => $currentDisk]) }}"
                                class="btn btn-default active"><i class="fa fa-list"></i></a>
-                            <a href="{{ route('dcat.admin.media-index', ['path' => $path, 'view' => 'list']) }}"
+                            <a href="{{ route('dcat.admin.media-index', ['path' => $path, 'view' => 'list', 'disk' => $currentDisk]) }}"
                                class="btn btn-default"><i class="fa fa-th"></i></a>
                         </div>
+
+                        @if(count($disks) > 1)
+                            <div class="btn-group">
+                                <select class="form-control disk-select" style="min-width: 5rem;appearance: auto">
+                                    @foreach($disks as $disk)
+                                        <option @if($currentDisk === $disk) selected @endif>{{ $disk }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
 
                         <div class="input-group input-group-sm pull-right goto-url" style="width: 250px;">
                             <input type="text"
@@ -72,8 +84,8 @@
                     <ol class="breadcrumb" style="margin-bottom: 10px;">
 
                         <li class="breadcrumb-item"><a
-                                href="{{ route('dcat.admin.media-index',['view' => $view]) }}"><i
-                                    class="fa fa-th-large"></i> </a></li>
+                                    href="{{ route('dcat.admin.media-index',['view' => $view]) }}"><i
+                                        class="fa fa-th-large"></i> </a></li>
 
                         @foreach($nav as $item)
                             <li class="breadcrumb-item"><a href="{{ $item['url'] }}"> {{ $item['name'] }}</a></li>
@@ -99,7 +111,7 @@
                         {{ \Jatdung\MediaManager\MediaManagerServiceProvider::trans('media.rename') }}
                         & {{ \Jatdung\MediaManager\MediaManagerServiceProvider::trans('media.move') }}</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
+                                aria-hidden="true">&times;</span></button>
 
                 </div>
                 <form id="file-move" action="{{ admin_route('media-move') }}" method="post">
@@ -112,6 +124,7 @@
                             <input type="text" class="form-control" name="new"></input>
                         </div>
                         <input type="hidden" name="path"></input>
+                        <input type="hidden" name="disk" value="{{ $currentDisk }}"></input>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default btn-sm"
@@ -153,7 +166,7 @@
                 <div class="modal-header">
                     <h4 class="modal-title" id="newFolderModalLabel">{{ trans('admin.new_folder') }}</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
+                                aria-hidden="true">&times;</span></button>
                 </div>
                 <form action="{{ admin_route('media-new-folder') }}" method="post" id="new-folder">
                     <div class="modal-body">
@@ -161,6 +174,7 @@
                             <input type="text" class="form-control" name="name"></input>
                         </div>
                         <input type="hidden" name="dir" value="{{ $path }}"></input>
+                        <input type="hidden" name="disk" value="{{ $currentDisk }}"></input>
                         {{ csrf_field() }}
                     </div>
                     <div class="modal-footer">
@@ -181,6 +195,7 @@
         {{ method_field("delete") }}
         {{ csrf_field() }}
         <input type="hidden" name="files[]">
+        <input type="hidden" name="disk" value="{{ $currentDisk }}">
     </form>
 </div>
 
