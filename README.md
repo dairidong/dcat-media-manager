@@ -18,8 +18,15 @@
     ```
    
 ## 注意
-目前本项目只在 `laravel8` 版本下测试通过（对应 `league/flysystem` 版本为 `^1.1`），`laravel9` 以上由于 `league/flysystem` 已升级为 `3.0` 版本，应该有兼容性问题，低版本 `laravel` 可自行测试。
-   
+~~目前本项目只在 `laravel8` 版本下测试通过（对应 `league/flysystem` 版本为 `^1.1`），`laravel9` 以上由于 `league/flysystem` 已升级为 `3.0` 版本，应该有兼容性问题，低版本 `laravel` 可自行测试。~~
+
+`2.x` 版本更新对 `laravel9` ( `league/flysystem:3.x` )的支持
+
+`laravel9` 请使用 `2.x` 版本
+
+旧版本 `laravel` 使用 `1.x` 版本
+
+
 ## 说明
 本项目代码基本源于 [laravel-admin-extensions/media-manager](https://github.com/laravel-admin-extensions/media-manager) 项目，仅对不兼容的部分做了修改，如涉及侵权问题麻烦联系本人删除该项目。
 

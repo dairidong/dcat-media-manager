@@ -5,7 +5,7 @@ namespace Jatdung\MediaManager;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use League\Flysystem\Adapter\Local;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 
 class MediaManager
 {
@@ -27,7 +27,7 @@ class MediaManager
     /**
      * List of allowed extensions.
      *
-     * @var string
+     * @var string|array
      */
     protected $allowed = [];
 
@@ -80,7 +80,7 @@ class MediaManager
     {
         $this->storage = Storage::disk($this->disk);
 
-        if (!$this->storage->getDriver()->getAdapter() instanceof Local) {
+        if (!$this->storage->getAdapter() instanceof LocalFilesystemAdapter) {
             throw new \Exception('[jatdung/media-manager] only works for local storage.');
         }
     }
@@ -280,7 +280,7 @@ class MediaManager
         switch ($this->detectFileType($file)) {
             case 'image':
 
-                if ($this->storage->getDriver()->getConfig()->has('url')) {
+                if ($this->storage->getConfig()['url']) {
                     $url = $this->storage->url($file);
                     $preview = "<span class=\"file-icon has-img\"><img src=\"$url\" alt=\"Attachment\"></span>";
                 } else {
@@ -338,7 +338,7 @@ class MediaManager
 
     public function getFilesize($file)
     {
-        $bytes = $this->storage->getSize($file);
+        $bytes = $this->storage->size($file);
 
         for ($i = 0; $bytes > 1024; $i++) {
             $bytes /= 1024;
