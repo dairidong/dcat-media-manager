@@ -28,7 +28,7 @@
             });
 
             // 文件移动
-            $('#file-move').on('subm it', function (event) {
+            $('#file-move').on('submit', function (event) {
                 event.preventDefault();
 
                 var $form = $(this);

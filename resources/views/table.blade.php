@@ -4,7 +4,7 @@
         <tr>
             <th width="40px;">
                 <span class="file-select-all">
-                    <input type="checkbox" value=""></input>
+                    <input type="checkbox" value="" />
                 </span>
             </th>
             <th>{{ trans('admin.name') }}</th>
@@ -16,7 +16,7 @@
             <tr>
                 <td style="padding-top: 15px;">
                     <span class="file-select">
-                        <input type="checkbox" value="{{ $item['name'] }}"></input>
+                        <input type="checkbox" value="{{ $item['name'] }}" />
                     </span>
                 </td>
                 <td>

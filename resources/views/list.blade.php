@@ -6,7 +6,7 @@
         @foreach($list as $item)
             <li>
             <span class="file-select">
-                <input type="checkbox" class="file-checkbox" value="{{ $item['name'] }}"></input>
+                <input type="checkbox" class="file-checkbox" value="{{ $item['name'] }}" />
             </span>
 
                 {!! $item['preview'] !!}

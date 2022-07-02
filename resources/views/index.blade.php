@@ -27,8 +27,8 @@
                                   id="file-upload-form"
                                   enctype="multipart/form-data">
                                 <input type="file" name="files[]" class="hidden file-upload" multiple>
-                                <input type="hidden" name="dir" value="{{ $path }}"></input>
-                                <input type="hidden" name="disk" value="{{ $currentDisk }}"></input>
+                                <input type="hidden" name="dir" value="{{ $path }}" />
+                                <input type="hidden" name="disk" value="{{ $currentDisk }}" />
                                 {{ csrf_field() }}
                             </form>
                         </label>
@@ -121,10 +121,11 @@
                             <label for="recipient-name" class="control-label">
                                 {{ \Jatdung\MediaManager\MediaManagerServiceProvider::trans('media.path') }}:
                             </label>
-                            <input type="text" class="form-control" name="new"></input>
+                            <input type="text" class="form-control" name="new" />
                         </div>
-                        <input type="hidden" name="path"></input>
-                        <input type="hidden" name="disk" value="{{ $currentDisk }}"></input>
+                        <input type="hidden" name="path" />
+                        <input type="hidden" name="disk" value="{{ $currentDisk }}" />
+                        {{ csrf_field() }}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default btn-sm"
@@ -148,7 +149,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <input type="text" class="form-control-plaintext text-dark" readonly></input>
+                        <input type="text" class="form-control-plaintext text-dark" readonly />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -171,10 +172,10 @@
                 <form action="{{ admin_route('media-new-folder') }}" method="post" id="new-folder">
                     <div class="modal-body">
                         <div class="form-group">
-                            <input type="text" class="form-control" name="name"></input>
+                            <input type="text" class="form-control" name="name" />
                         </div>
-                        <input type="hidden" name="dir" value="{{ $path }}"></input>
-                        <input type="hidden" name="disk" value="{{ $currentDisk }}"></input>
+                        <input type="hidden" name="dir" value="{{ $path }}" />
+                        <input type="hidden" name="disk" value="{{ $currentDisk }}" />
                         {{ csrf_field() }}
                     </div>
                     <div class="modal-footer">
