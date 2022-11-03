@@ -69,7 +69,7 @@ class MediaManager
         $this->path = $path;
 
         if (!empty(config('admin.extension.media-manager.allowed_ext'))) {
-            $this->allowed = explode(',', config('admin.extensions.media-manager.allowed_ext'));
+            $this->allowed = explode(',', config('admin.extension.media-manager.allowed_ext'));
         }
 
         $this->initDisk($disk);
