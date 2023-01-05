@@ -3,11 +3,8 @@
     "alias": "",
     "description": "Dcat Media Manager",
     "type": "library",
-    "keywords": [
-        "dcat-admin",
-        "extension"
-    ],
-    "homepage": "https://github.com/jatdung/media-manager",
+    "keywords": ["dcat-admin", "extension"],
+    "homepage": "https://github.com/dairidong/dcat-media-manager",
     "license": "MIT",
     "authors": [
         {
