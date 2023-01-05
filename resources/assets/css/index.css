@@ -1,3 +1,11 @@
+.goto-url input.form-control {
+    font-size: 1em;
+}
+
+.switch-view {
+    height: 34px;
+}
+
 .breadcrumb {
     padding: 8px 15px;
     margin-bottom: 20px;
@@ -20,7 +28,11 @@
     height: auto;
 }
 
-/* only in list */
+.copy-url-btn {
+    height: 100%;
+}
+
+/* only in spread */
 .file-info {
     text-align: center;
     padding: 10px;
@@ -34,23 +46,22 @@
 }
 
 .files {
-    list-style: none;
     margin: 0;
     padding: 0;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11em, .5fr));
+    column-gap: .8em;
+    row-gap: 2em;
+    justify-content: space-around;
 }
 
 .files > li > .file-select {
     position: absolute;
-    top: -4px;
-    left: -1px;
 }
 
 .files > li {
-    float: left;
-    width: 150px;
     border: 1px solid #eee;
-    margin-bottom: 10px;
-    margin-right: 10px;
     position: relative;
 }
 

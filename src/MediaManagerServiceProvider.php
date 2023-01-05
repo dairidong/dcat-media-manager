@@ -3,13 +3,15 @@
 namespace Jatdung\MediaManager;
 
 use Dcat\Admin\Extend\ServiceProvider;
-use Dcat\Admin\Admin;
+use Illuminate\Contracts\Support\DeferrableProvider;
 
-class MediaManagerServiceProvider extends ServiceProvider
+class MediaManagerServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     protected $js = [
         'js/index.js',
+        'js/clipboard.min.js'
     ];
+
     protected $css = [
         'css/index.css',
     ];
@@ -17,8 +19,8 @@ class MediaManagerServiceProvider extends ServiceProvider
     protected $menu = [
         [
             'title' => 'Media Manager',
-            'uri'   => 'media',
-            'icon'  => 'fa-folder-open'
+            'uri' => 'media',
+            'icon' => 'fa-folder-open',
         ],
     ];
 }

@@ -2,147 +2,110 @@
 
 namespace Jatdung\MediaManager\Http\Controllers;
 
-use Dcat\Admin\Layout\Content;
+use Dcat\Admin\Actions\Response;
 use Dcat\Admin\Admin;
-use Dcat\Admin\Widgets\Modal;
+use Dcat\Admin\Layout\Content;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Jatdung\MediaManager\MediaManager;
 use Jatdung\MediaManager\MediaManagerServiceProvider;
+use Jatdung\MediaManager\MediaService;
 
 class MediaManagerController extends Controller
 {
+    /**
+     * @var Response
+     */
+    protected $response;
+
     public function index(Content $content, Request $request)
     {
         Admin::requireAssets('@jatdung.media-manager');
 
-        $path = $request->get('path') ?: '/';
-        $disk = $request->get('disk') ?: '';
-        $view = $request->get('view') ?: 'table';
+        $path = $request->input('path') ?: '/';
+        $disk = $request->input('disk') ?: '';
 
-        $manager = new MediaManager($path, $disk);
+        if ($request->has('view')) {
+            $view = $request->input('view');
+        } elseif ($request->hasCookie('view')) {
+            $view = $request->cookie('view');
+        } else {
+            $view = 'table';
+        }
 
-        return $content
-            ->title(MediaManagerServiceProvider::trans('media.title'))
+        $service = $this->service()->setDisk($disk)->setPath($path);
+        $manager = $this->manager($service)->enableView($view);
+
+        $content->title(MediaManagerServiceProvider::trans('media.title'))
             ->description(MediaManagerServiceProvider::trans('media.description'))
-            ->body(Admin::view("jatdung.media-manager::index", [
-                'list'        => $manager->ls(),
-                'nav'         => $manager->navigation($view),
-                'view'        => $view,
-                'path'        => $path,
-                'disks'       => $manager->getAllDisks(),
-                'currentDisk' => $disk,
-            ]));
+            ->body($manager);
+
+        return response($content)->cookie('view', $view);
     }
 
-    public function download(Request $request)
+    public function destroy(Request $request)
     {
-        $file = $request->get('file');
-        $disk = $request->get('disk', '');
-
-        $manager = new MediaManager($file, $disk);
-
-        try {
-            return $manager->download();
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => false,
-                'message' => $e->getMessage(),
-            ]);
-        }
-    }
-
-    public function upload(Request $request)
-    {
-        $files = $request->file('files');
-        $dir = $request->get('dir') ?: '/';
-        $disk = $request->get('disk') ?: '';
-
-        $manager = new MediaManager($dir, $disk);
-
-        try {
-            $manager->upload($files);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => false,
-                'message' => $e->getMessage(),
-            ]);
-        }
-
-        return response()->json([
-            'status'  => true,
-            'message' => trans('admin.uploader.upload_success_message', ['success' => count($files)])
+        $validated = $request->validate([
+            'file' => 'required|string',
+            'disk' => 'required|string',
         ]);
-    }
-
-    public function delete(Request $request)
-    {
-        $files = $request->get('files');
-        $disk = $request->get('disk') ?: '';
-
-        $manager = new MediaManager('/', $disk);
 
         try {
-            $manager->delete($files);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => false,
-                'message' => $e->getMessage(),
-            ]);
+            $this->service()
+                ->setDisk($validated['disk'])
+                ->delete($validated['file']);
+        } catch (Exception $e) {
+            return $this->response()->error($e->getMessage());
         }
-        return response()->json([
-            'status'  => true,
-            'message' => trans('admin.delete_succeeded'),
-        ]);
+
+        return $this->response()->success(trans('admin.delete_succeeded'))->refresh();
     }
 
-    public function move(Request $request)
+    public function batchDestroy(Request $request)
     {
-        $path = $request->get('path');
-        $new = $request->get('new');
-        $disk = $request->get('disk') ?: '';
+        $validated = $request->validate([
+            'path' => 'required|string',
+            'disk' => 'required|string',
+            'files' => 'array'
+        ]);
 
-        $manager = new MediaManager($path, $disk);
-
-        try {
-            $manager->move($new);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => false,
-                'message' => $e->getMessage(),
-            ]);
+        $path = $validated['path'];
+        $disk = $validated['disk'];
+        $files = $validated['files'];
+        if (empty($files)) {
+            goto response;
         }
 
-        return response()->json([
-            'status'  => true,
-            'message' => MediaManagerServiceProvider::trans('media.move_succeeded'),
-        ]);
+        try {
+            $this->service()
+                ->setDisk($disk)
+                ->setPath($path)
+                ->batchDelete($files);
+        } catch (Exception $e) {
+            return $this->response()->error($e->getMessage());
+        }
+
+        response:
+        return $this->response()->success(trans('admin.delete_succeeded'))->refresh();
     }
 
-    public function newFolder(Request $request)
+    protected function service()
     {
-        $dir = $request->get('dir');
-        $name = $request->get('name');
-        $disk = $request->get('disk') ?: '';
+        return new MediaService();
+    }
 
-        $manager = new MediaManager($dir, $disk);
+    protected function manager(MediaService $service)
+    {
+        return new MediaManager($service);
+    }
 
-        try {
-            if (!$manager->newFolder($name)) {
-                throw new \Exception(MediaManagerServiceProvider::trans('media.new_folder_failed'));
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => false,
-                'message' => $e->getMessage(),
-            ]);
+    protected function response()
+    {
+        if (is_null($this->response)) {
+            $this->response = new Response();
         }
-        return response()->json([
-            'status'  => true,
-            'message' => MediaManagerServiceProvider::trans('media.new_folder_succeeded'),
-        ]);
+
+        return $this->response;
     }
 }
