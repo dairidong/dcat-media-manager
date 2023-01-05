@@ -3,9 +3,8 @@
 namespace Jatdung\MediaManager;
 
 use Dcat\Admin\Extend\ServiceProvider;
-use Illuminate\Contracts\Support\DeferrableProvider;
 
-class MediaManagerServiceProvider extends ServiceProvider implements DeferrableProvider
+class MediaManagerServiceProvider extends ServiceProvider
 {
     protected $js = [
         'js/index.js',
