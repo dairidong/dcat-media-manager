@@ -3,6 +3,7 @@
 namespace Jatdung\MediaManager\Adapters;
 
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Jatdung\MediaManager\Concerns\S3Adapter;
@@ -67,5 +68,18 @@ class OvertrueQiniuAdapter extends Adapter implements S3Compatible
         ]);
 
         return $s3Disk;
+    }
+
+    public function metadata(string $path)
+    {
+        $attributes = $this->disk()->getAdapter()->mimeType($path);
+        return $this->buildMetaDataFromArray([
+            'name' => basename($path),
+            'path' => $path,
+            'url' => $this->url($path),
+            'mimeType' => $attributes->mimeType(),
+            'fileSize' => format_byte($attributes->fileSize(), 2),
+            'lastModifiedAt' => Carbon::createFromTimestamp($attributes->lastModified()) ?: '',
+        ]);
     }
 }

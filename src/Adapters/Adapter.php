@@ -138,27 +138,39 @@ class Adapter
 
     public function metadata(string $path)
     {
+        return $this->buildMetaDataFromArray([
+            'name' => basename($path),
+            'path' => $path,
+            'url' => $this->url($path),
+            'mimeType' => $this->disk()->mimeType($path),
+            'fileSize' => format_byte($this->disk()->fileSize($path), 2),
+            'lastModifiedAt' => Carbon::createFromTimestamp($this->disk()->lastModified($path)) ?: '',
+        ]);
+    }
+
+    protected function buildMetaDataFromArray(array $data)
+    {
         return [
-            'name' => ['label' => trans('admin.name'), 'value' => basename($path)],
+            'name' => ['label' => trans('admin.name'), 'value' => $data['name']],
             'path' => [
                 'label' => MediaManagerServiceProvider::trans('media.path'),
-                'value' => $path
+                'value' => $data['path']
             ],
             'url' => [
                 'label' => MediaManagerServiceProvider::trans('media.url'),
-                'value' => $this->url($path)
+                'value' => $data['url']
             ],
             'mimeType' => [
                 'label' => 'mime type',
-                'value' => $this->disk()->mimeType($path)
+                'value' => $data['mimeType']
             ],
             'fileSize' => [
                 'label' => trans('admin.size'),
-                'value' => format_byte($this->disk()->fileSize($path), 2)
+                'value' => $data['fileSize']
             ],
             'lastModifiedAt' => [
                 'label' => trans('admin.updated_at'),
-                'value' => Carbon::createFromTimestamp($this->disk()->lastModified($path)),
+                'value' => $data['lastModifiedAt']
             ]
         ];
     }
