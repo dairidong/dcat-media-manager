@@ -154,7 +154,7 @@ class Adapter
             ],
             'fileSize' => [
                 'label' => trans('admin.size'),
-                'value' => $this->disk()->fileSize($path)
+                'value' => format_byte($this->disk()->fileSize($path), 2)
             ],
             'lastModifiedAt' => [
                 'label' => trans('admin.updated_at'),

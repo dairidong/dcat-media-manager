@@ -12,10 +12,6 @@ class File
 {
     use HasManager, HasActions;
 
-    const FILE_SIZE_UNITS = [
-        'B', 'KB', 'MB', 'GB', 'TB', 'PB',
-    ];
-
     protected $checbox = '';
 
     public function __construct(
@@ -64,12 +60,7 @@ class File
             return '';
         }
 
-        $bytes = $this->file->fileSize();
-        for ($i = 0; $bytes > 1024; $i++) {
-            $bytes /= 1024;
-        }
-
-        return round($bytes, 2) . ' ' . self::FILE_SIZE_UNITS[$i];
+        return format_byte($this->file->fileSize(),2);
     }
 
     /**
