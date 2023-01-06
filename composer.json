@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": "^8.0.2",
-        "dcat/laravel-admin": "~2.0",
+        "dcat/laravel-admin": "~2.0-beta",
         "league/flysystem": "^3.0.0"
     },
     "autoload": {
