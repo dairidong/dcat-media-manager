@@ -73,6 +73,7 @@ class MediaService
     public function __construct(string $path = null, string $disk = null, array $config = [])
     {
         $this->initConfig($config);
+        $this->allowedExtensions($this->config['allowed_ext']);
 
         if (!is_null($disk)) {
             $this->setDisk($disk);
@@ -246,8 +247,8 @@ class MediaService
     public function move(string $source, string $destination)
     {
         $ext = pathinfo($destination, PATHINFO_EXTENSION);
-        // todo 检查
-        if ($this->allowed && !in_array($ext, $this->allowed)) {
+        $allowed = $this->allowedExtensions();
+        if ($allowed && !in_array($ext, $allowed)) {
             throw new \Exception('File extension ' . $ext . ' is not allowed');
         }
 
@@ -363,11 +364,14 @@ class MediaService
         return $this->allDisks;
     }
 
-    public function allowedExtensions()
+    public function allowedExtensions($allowed = '')
     {
-        // todo
-        // $this->allowed = explode(',', config('admin.extension.media-manager.allowed_ext'));
-        return $this->config['allowed_ext'];
+        if ($allowed) {
+            $this->allowed = array_filter(
+                is_array($allowed) ? $allowed : explode(',', $this->config['allowed_ext'])
+            );
+        }
+        return $this->allowed;
     }
 
     public function isShowHiddenFiles()
