@@ -8,8 +8,22 @@
 
 ### 注意：3.0 配置名发生变更，必须更新
 
-1. 下载`zip`压缩包，打开扩展管理页面，点击`本地安装`按钮选择提交，然后找到 `jatdung.media-manager` 行点击 `启用` 按钮。
+1. - 本地安装
+
+   在 [release](https://github.com/dairidong/dcat-media-manager/releases/) 下载`zip`压缩包 ，打开扩展管理页面，点击`本地安装`按钮选择提交。
+   
+   - composer 安装
+
+	```
+	composer require jatdung/media-manager
+	或
+	composer require jatdung/media-manager:版本号
+	```
+
+   
+
 2. 打开 `config/admin.php`，找到 `extension` ，添加配置：
+
     ```php
     'extension'                 => [
         // 添加 meida-manager 选项
@@ -41,6 +55,10 @@
     ```
 
 
+
+3. 在扩展管理页面找到 `jatdung.media-manager` 更新并启用。
+
+   
 
 ## 版本
 
