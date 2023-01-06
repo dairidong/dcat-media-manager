@@ -6,5 +6,7 @@ use Illuminate\Filesystem\FilesystemAdapter;
 
 interface S3Compatible
 {
-    public function s3Disk(FilesystemAdapter $disk): FilesystemAdapter;
+    public function buildS3Disk(FilesystemAdapter $disk): FilesystemAdapter;
+
+    public function originDisk(): FilesystemAdapter;
 }

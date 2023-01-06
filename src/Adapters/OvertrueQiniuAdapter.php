@@ -4,22 +4,25 @@ namespace Jatdung\MediaManager\Adapters;
 
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Jatdung\MediaManager\Concerns\S3Adapter;
 use Jatdung\MediaManager\Contracts\S3Compatible;
 use Jatdung\MediaManager\Exceptions\AdapterException;
 use Illuminate\Support\Facades\File as FileFacade;
 
 class OvertrueQiniuAdapter extends Adapter implements S3Compatible
 {
+    use S3Adapter {
+        setUpDisk as S3SetUpDisk;
+    }
+
     protected $imageExtensions = ['psd', 'jpeg', 'png', 'gif', 'webp', 'tiff', 'bmp', 'avif', 'heif'];
 
-    public function setUpDisk(FilesystemAdapter $disk)
+    protected function setUpDisk(FilesystemAdapter $disk)
     {
-        $disk = $this->s3Disk($disk);
         $this->directorySupport['move'] = false;
 
-        return parent::setUpDisk($disk);
+        return $this->S3SetUpDisk($disk);
     }
 
     /**
@@ -35,7 +38,7 @@ class OvertrueQiniuAdapter extends Adapter implements S3Compatible
         return $url . '?imageView2/2/h/90/format/jpg/interlace/1/ignore-error/1';
     }
 
-    public function s3Disk(FilesystemAdapter $disk): FilesystemAdapter
+    public function buildS3Disk(FilesystemAdapter $disk): FilesystemAdapter
     {
         $config = $disk->getConfig();
         // 校验补充设置
