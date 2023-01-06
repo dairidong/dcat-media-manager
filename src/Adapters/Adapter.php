@@ -3,8 +3,10 @@
 namespace Jatdung\MediaManager\Adapters;
 
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Carbon;
 use Jatdung\MediaManager\Exceptions\AdapterException;
 use Jatdung\MediaManager\Exceptions\DriverException;
+use Jatdung\MediaManager\MediaManagerServiceProvider;
 
 class Adapter
 {
@@ -132,6 +134,33 @@ class Adapter
     public function url(string $path)
     {
         return $this->disk()->url($path);
+    }
+
+    public function metadata(string $path)
+    {
+        return [
+            'name' => ['label' => trans('admin.name'), 'value' => basename($path)],
+            'path' => [
+                'label' => MediaManagerServiceProvider::trans('media.path'),
+                'value' => $path
+            ],
+            'url' => [
+                'label' => MediaManagerServiceProvider::trans('media.url'),
+                'value' => $this->url($path)
+            ],
+            'mimeType' => [
+                'label' => 'mime type',
+                'value' => $this->disk()->mimeType($path)
+            ],
+            'fileSize' => [
+                'label' => trans('admin.size'),
+                'value' => $this->disk()->fileSize($path)
+            ],
+            'lastModifiedAt' => [
+                'label' => trans('admin.updated_at'),
+                'value' => Carbon::createFromTimestamp($this->disk()->lastModified($path)),
+            ]
+        ];
     }
 
     /**

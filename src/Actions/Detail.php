@@ -17,12 +17,8 @@ class Detail extends FileAction
         parent::setUpHtmlAttributes();
 
         $this->setHtmlAttribute([
-            'data-type' => $this->file instanceof Directory ? 'directory' : 'file',
-            'data-name' => $this->file->name(),
+            'data-disk' => $this->manager()->disk(),
             'data-path' => $this->file->path(),
-            'data-file-size' => $this->file->fileSize(),
-            'data-last-modified' => $this->file->lastModified(),
-            'data-url' => $this->manager()->service()->url($this->file->path()),
         ]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace Jatdung\MediaManager;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -166,6 +167,20 @@ class MediaService
             $list = $list->filter(fn($file) => !Str::startsWith(basename($file['path']), '.'));
         }
         return $list;
+    }
+
+    /**
+     * @param string $path
+     * @return array
+     * @throws FileNotFoundException
+     */
+    public function metadata(string $path)
+    {
+        if (!$this->adapter->disk()->fileExists($path)) {
+            throw new FileNotFoundException();
+        }
+
+        return $this->adapter->metadata($path);
     }
 
     /**
