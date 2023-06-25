@@ -86,11 +86,20 @@ class MediaService
 
     protected function initConfig(array $config = [])
     {
-        $this->config = array_merge_recursive(
+        $appConfig = config('admin.extension.media-manager');
+
+        $adapters = array_merge(
+            $this->config['adapters'],
+            data_get($appConfig, 'adapters', []),
+            data_get($config, 'adapters', [])
+        );
+
+        $this->config = array_merge(
             $this->config,
-            config('admin.extension.media-manager'),
+            $appConfig,
             $config,
         );
+        $this->config['adapters'] = $adapters;
 
         return $this;
     }
