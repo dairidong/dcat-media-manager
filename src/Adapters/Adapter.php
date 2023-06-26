@@ -192,6 +192,9 @@ class Adapter
      */
     public function directoryExists(string $path)
     {
+        if ($path === '' || $path === '/') {
+            return true;
+        }
         return $this->disk()->directoryExists($path);
     }
 
