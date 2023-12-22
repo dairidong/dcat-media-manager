@@ -36,6 +36,11 @@ clipboard.on("success", function (e) {
     $(e.trigger).attr('class', 'copy-btn btn btn-success').find('i').attr('class', 'feather icon-check');
 });
 
+$(document).one('pjax:beforeReplace', function() {
+  clipboard.destroy();
+  clipboard = null;
+});
+
 JS;
     }
 }
